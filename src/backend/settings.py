@@ -90,6 +90,18 @@ DATABASES = {
     }
 }
 
+# Swagger settings
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
+
 # Authentication settings
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
