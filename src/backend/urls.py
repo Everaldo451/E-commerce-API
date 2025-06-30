@@ -6,9 +6,11 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from users import views as user_views
+from products import views as product_views
 
 router = routers.DefaultRouter()
 router.register(r'users', user_views.UserViewSet, basename="users")
+router.register(r'products', product_views.ProductViewsets, basename="products")
 
 schema_view = get_schema_view(
    openapi.Info(
