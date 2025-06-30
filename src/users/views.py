@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from .models import User
 from .serializer import UserSerializer
 
-class IsNotAuthenticatedAndPostMethod(permissions.BasePermission):
+class IsNotAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
-        return not request.user.is_authenticated and request.method=="POST"
+        return not request.user.is_authenticated
     
 
 class IsCurrentUserOrAdmin(permissions.BasePermission):
@@ -18,9 +18,20 @@ class IsCurrentUserOrAdmin(permissions.BasePermission):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (
-        (permissions.IsAuthenticated & IsCurrentUserOrAdmin) | IsNotAuthenticatedAndPostMethod,
-    )
+
+    def get_permissions(self):
+        if self.action=="create":
+            return [IsNotAuthenticated()]
+        return [
+            permissions.IsAuthenticated(),
+            IsCurrentUserOrAdmin()
+        ]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated or user.is_staff:
+            return User.objects.all()
+        return User.objects.filter(id=user.id)
 
     @action(detail=False, methods=["GET"], permission_classes=(permissions.IsAuthenticated,))
     def me(self, request):

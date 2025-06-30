@@ -20,23 +20,23 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
-    def create_user(self,  email, first_name, last_name, password=None, **kwargs):
+    def create_user(self, email, first_name, last_name, password=None, **kwargs):
         return self._create_user(
-            email, 
-            first_name, 
-            last_name, 
-            password, 
+            email=email, 
+            first_name=first_name, 
+            last_name=last_name, 
+            password=password, 
             is_staff=False,
             is_superuser=False,
             **kwargs
         )
     
-    def create_superuser(self,  email, first_name, last_name, password=None, **kwargs):
+    def create_superuser(self, email, first_name, last_name, password=None, **kwargs):
         return self._create_user(
-            email, 
-            first_name, 
-            last_name, 
-            password, 
+            email=email, 
+            first_name=first_name, 
+            last_name=last_name, 
+            password=password, 
             is_staff=True,
             is_superuser=True,
             **kwargs
