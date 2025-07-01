@@ -8,10 +8,11 @@ class Tag(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     price = models.DecimalField(max_digits=6, decimal_places=2, null=False, blank=False)
-    tags = models.ManyToManyField(Tag)
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now=True)
+    stock = models.IntegerField(max_length=9)
 
+    tags = models.ManyToManyField(Tag)
     created_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
