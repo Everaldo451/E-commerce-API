@@ -5,7 +5,7 @@ from rest_framework import status
 from .serializer import LoginSerializer
 from users.serializer import UserSerializer
 
-from .interfaces.services.auth_service import AuthService
+from backend.core.services.auth.base import AuthService
 
 
 class AuthenticationController:

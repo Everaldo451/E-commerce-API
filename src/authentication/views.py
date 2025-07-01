@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
 from drf_yasg.utils import swagger_auto_schema
 
-from .services.jwt_auth_service import JWTAuthService
+from backend.core.services.auth.implementations.jwt import JWTAuthService
 from .controller import AuthenticationController
 from .serializer import LoginSerializer, LoginResponseSerializer, LogoutResponseSerializer, RefreshResponseSerializer
 
@@ -51,8 +51,3 @@ class LogoutView(TokenBlacklistView):
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
-
-
-
-
-# Create your views here.
