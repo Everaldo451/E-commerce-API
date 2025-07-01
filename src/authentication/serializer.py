@@ -24,3 +24,20 @@ class LoginResponseSerializer(serializers.Serializer):
         child=serializers.DictField(), 
         allow_empty=False
     )
+
+class RefreshResponseSerializer(serializers.Serializer):
+    access_token = serializers.CharField()
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()
+    
+
+class LogoutResponseSerializer(serializers.Serializer):
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()
