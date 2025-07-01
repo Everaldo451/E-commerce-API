@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from typing import Callable
 from .models import Tag, Product, ProductMedia
 
 class TagSerializer(serializers.ModelSerializer):
@@ -18,7 +19,11 @@ class ProductMediaSerializer(serializers.ModelSerializer):
         
 
 class ProductSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True)
+    tags = serializers.SlugRelatedField(
+        many=True,
+        slug_field='name',
+        queryset=Tag.objects.all()
+    )
     media = ProductMediaSerializer(many=True)
     created_by = serializers.SerializerMethodField('get_created_by')
 
@@ -29,24 +34,32 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'name', 'price', 'tags', 'media', 'created_at', 'is_available','created_by']
         read_only_fields = ['id', 'created_at', 'is_available', 'created_by']
+    
+    def use_product_media_method(self, *args, media_data:list[dict], product, media_method:Callable) -> None:
+        for media in media_data:
+                media_data = {key: media[key] for key in args}
+                media_method(product=product, **media_data)
 
     def create(self, validated_data:dict):
+        request = self.context.get('request')
+        user = request.user
+
         tags_data = validated_data.pop('tags')
         media_data = validated_data.pop('media')
 
-        product = Product.objects.create(**validated_data)
+        product = Product.objects.create(**validated_data, created_by=user)
 
-        tag_objs = [
-            Tag.objects.get_or_create(name=tag['name'])[0]
-            for tag in tags_data
-        ]
-        product.tags.set(tag_objs)
-
-        for media in media_data:
-            ProductMedia.objects.create(product=product, **media)
+        product.tags.set(tags_data)
+        self.use_product_media_method(
+            "data",
+            media_data=media_data, 
+            product=product, 
+            media_method=ProductMedia.objects.create,
+        )
         return product
     
     def update(self, instance:Product, validated_data:dict):
+        request = self.context.get('request')
         tags_data = validated_data.pop('tags', None)
         media_data = validated_data.pop('media', None)
 
@@ -54,15 +67,18 @@ class ProductSerializer(serializers.ModelSerializer):
         instance.price = validated_data.get('price', instance.price)
 
         if tags_data is not None:
-            tag_objs = [
-                Tag.objects.get_or_create(name=tag['name'])[0]
-                for tag in tags_data
-            ]
-            instance.tags.set(tag_objs)
+            if request.method == "PATCH":
+                instance.tags.add(*tags_data)
+            else:
+                instance.tags.set(tags_data)
 
         instance.save()
 
         if media_data is not None:
-            for media in media_data:
-                ProductMedia.objects.get_or_create(product=instance, data=media['data'])
+            self.use_product_media_method(
+                "data",
+                media_data=media_data, 
+                product=instance, 
+                media_method=ProductMedia.objects.get_or_create,
+            )
         return instance
