@@ -4,15 +4,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 
+from backend.core.permissions import IsOwnerOrReadOnly
+
 from .models import Product
 from .serializer import ProductSerializer, SearchSerializer
-
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.created_by == request.user
-
 
 class ProductViewsets(viewsets.ModelViewSet):
     queryset = Product.objects.all()

@@ -3,20 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from backend.core.services.email.implementations.django import DjangoEmailService
+from backend.core.permissions import IsNotAuthenticated, IsCurrentUserOrAdmin
 
 from .models import User
 from .serializer import UserSerializer
 from .user_register_email_send import UserRegisterEmailSend
-
-class IsNotAuthenticated(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return not request.user.is_authenticated
-    
-
-class IsCurrentUserOrAdmin(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return request.user.is_staff or obj == request.user
-    
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
