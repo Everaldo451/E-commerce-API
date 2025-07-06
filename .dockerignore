@@ -1,0 +1,10 @@
+.venv/
+venv/
+
+tests/
+
+*.db
+*.sqlite3
+
+README.md
+LICENSE
