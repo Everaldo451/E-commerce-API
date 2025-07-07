@@ -20,7 +20,7 @@ class LoginSerializer(serializers.Serializer):
 
 class LoginResponseSerializer(serializers.Serializer):
     user = UserSerializer()
-    token = serializers.DictField(
+    tokens = serializers.DictField(
         child=serializers.DictField(), 
         allow_empty=False
     )
