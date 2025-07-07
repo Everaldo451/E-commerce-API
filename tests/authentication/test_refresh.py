@@ -9,9 +9,9 @@ class TestRefresh:
         user_data = {
             'username': 'Username',
             'email': 'user@example.com',
-            'password': 'password',
             'first_name': 'AnyName',
-            'last_name': 'AnyLastName'
+            'last_name': 'AnyLastName',
+            'password': 'valid123Password$',
         }
         django_user_model.objects.create_user(**user_data)
         response = client.post(

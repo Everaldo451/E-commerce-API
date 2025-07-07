@@ -9,16 +9,20 @@ class TestLogin:
         self.user_data = {
             'username': 'Username',
             'email': 'user@example.com',
-            'password': 'password',
             'first_name': 'AnyName',
-            'last_name': 'AnyLastName'
+            'last_name': 'AnyLastName',
+            'password': 'valid123Password$',
+        }
+        self.data = {
+            'email': self.user_data.get('email'),
+            'password': self.user_data.get('password')
         }
         django_user_model.objects.create_user(**self.user_data)
 
     def test_success(self, client):
         response = client.post(
             self.url,
-            data=self.user_data
+            data=self.data
         )
 
         assert response.status_code==201
@@ -27,11 +31,12 @@ class TestLogin:
 
         user = json.get('user')
         assert isinstance(user, dict)
-        for key, value in user.items():
-            user_data_value = self.user_data.get(key)
-            if self.user_data.get(key) is None:
-                continue
-            assert user_data_value == value
+        assert user.get('id') is not None
+        assert user.get('username') == self.user_data.get('username')
+        assert user.get('email') == self.user_data.get('email')
+        assert user.get('first_name') == self.user_data.get('first_name')
+        assert user.get('last_name') == self.user_data.get('last_name')
+        assert user.get('is_staff') == False
 
         tokens = json.get('tokens')
         assert isinstance(tokens, dict)
@@ -40,7 +45,7 @@ class TestLogin:
         response = client.post(
             self.url,
             data={
-                **self.user_data,
+                **self.data,
                 'password': 'anotherpassword'
             }
         )
@@ -55,7 +60,7 @@ class TestLogin:
         response = client.post(
             self.url,
             data={
-                **self.user_data,
+                **self.data,
                 'is_staff': True,
             }
         )
