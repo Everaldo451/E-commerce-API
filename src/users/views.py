@@ -38,7 +38,7 @@ class UserViewSet(viewsets.ModelViewSet):
         try:
             register_email_send.send(username, email)
         except Exception as error:
-            pass
+            django_email_service.error_handler(error)
 
         return response
 

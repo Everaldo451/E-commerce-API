@@ -26,3 +26,6 @@ class DjangoEmailService(EmailService):
             message.attach_alternative(email_content["content"], email_content["content_type"])
 
         message.send()
+
+    def error_handler(self, error):
+        return super().error_handler(error)

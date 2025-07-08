@@ -7,6 +7,11 @@ class EmailContentPart(TypedDict):
     content_type: ContentType
     content: str
 
+class ErrorHandlerResponse(TypedDict):
+    error: bool
+    status: int
+    message: str
+
 class EmailService(ABC):
 
     @abstractmethod
@@ -28,4 +33,8 @@ class EmailService(ABC):
         to:List[str], 
         content:List[EmailContentPart]
     ) -> None:
+        pass
+
+    @abstractmethod
+    def error_handler(self, error:Exception) -> ErrorHandlerResponse:
         pass
