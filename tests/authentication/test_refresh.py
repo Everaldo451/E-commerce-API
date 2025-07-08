@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.tokens import RefreshToken
 import pytest
 
 @pytest.mark.django_db
@@ -13,15 +14,11 @@ class TestRefresh:
             'last_name': 'AnyLastName',
             'password': 'valid123Password$',
         }
-        django_user_model.objects.create_user(**user_data)
-        response = client.post(
-            '/api/v1/auth/login/',
-            data=user_data
-        )
-        tokens = response.json().get('tokens')
-        refresh_token_value = tokens.get('refresh_token').get('value')
+        user = django_user_model.objects.create_user(**user_data)
+
+        refresh_token = str(RefreshToken.for_user(user))
         self.data = {
-            'refresh': refresh_token_value
+            'refresh': refresh_token
         }
 
     def test_success(self, client):
