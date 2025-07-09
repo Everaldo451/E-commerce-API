@@ -1,3 +1,5 @@
+from src.backend.core.validators.password import messages
+
 import pytest
 import logging
 
@@ -53,7 +55,7 @@ class TestCreate:
             data={
                 **self.data, 
                 'email': 'invalidemail', 
-                'password': 'invalidpassword'
+                'password': 'invalid'
             }
         )
 
@@ -63,5 +65,9 @@ class TestCreate:
 
         assert json.get('email') is not None
         assert json.get('password') is not None
+        
+        password = json.get('password')
+        for value in messages.values():
+            assert value in password
 
 

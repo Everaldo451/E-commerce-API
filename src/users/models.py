@@ -1,5 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
+from backend.core.validators.password import (
+    validate_min_digits_3, 
+    validate_min_length_8, 
+    validate_min_non_alphanumeric_1, 
+    validate_min_uppercase_1
+)
+
 import uuid
 
 class UserManager(BaseUserManager):
@@ -56,6 +64,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=False, 
         blank=False
     )
+    password = models.CharField(max_length=128, validators=[
+        validate_min_length_8,
+        validate_min_uppercase_1,
+        validate_min_digits_3,
+        validate_min_non_alphanumeric_1
+    ])
     first_name = models.CharField(
         max_length=100,
         null=False,
