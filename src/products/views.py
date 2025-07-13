@@ -10,7 +10,7 @@ from .models import Product
 from .serializer import ProductSerializer, SearchSerializer
 
 class ProductViewsets(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related('tags', 'media', 'created_by')
     serializer_class = ProductSerializer
     permission_classes=(permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
