@@ -1,13 +1,20 @@
 from rest_framework import serializers
 from typing import Callable
 from .models import Tag, Product, ProductMedia
+import logging
 
 class TagSerializer(serializers.ModelSerializer):
+    name = serializers.CharField()
 
     class Meta:
         model = Tag
         fields = ['id', 'name']
         read_only_fields = ['id']
+
+    def create(self, validated_data:dict):
+        logging.debug('create tag')
+        tag, _ = Tag.objects.get_or_create(**validated_data)
+        return tag
 
 
 class ProductMediaSerializer(serializers.ModelSerializer):
@@ -37,6 +44,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return [Tag.objects.get_or_create(**tag)[0] for tag in tags_data]
 
     def create(self, validated_data:dict):
+        logging.debug('Start product create.')
         request = self.context.get('request')
         user = request.user
 
@@ -45,17 +53,22 @@ class ProductSerializer(serializers.ModelSerializer):
 
         product = Product.objects.create(**validated_data, created_by=user)
 
+        logging.debug('tags search')
         tags = self.get_or_create_tags(tags_data)
+        logging.debug('tags add')
         product.tags.set(tags)
+        logging.debug('product media create.')
         self.use_product_media_method(
             "data",
             media_data=media_data, 
             product=product, 
             media_method=ProductMedia.objects.create,
         )
+        logging.debug('product created successfully.')
         return product
     
     def update(self, instance:Product, validated_data:dict):
+        logging.debug("Start product update.")
         request = self.context.get('request')
         tags_data = validated_data.pop('tags', None)
         media_data = validated_data.pop('media', None)
@@ -64,21 +77,26 @@ class ProductSerializer(serializers.ModelSerializer):
         instance.price = validated_data.get('price', instance.price)
 
         if tags_data is not None:
+            logging.debug("tags search")
             tags = self.get_or_create_tags(tags_data)
             if request.method == "PATCH":
+                logging.debug("tags partial update")
                 instance.tags.add(*tags)
             else:
+                logging.debug("tags total update")
                 instance.tags.set(tags)
 
         instance.save()
 
         if media_data is not None:
+            logging.debug('product media update.')
             self.use_product_media_method(
                 "data",
                 media_data=media_data, 
                 product=instance, 
                 media_method=ProductMedia.objects.get_or_create,
             )
+        logging.debug('product updated successfully.')
         return instance
 
 

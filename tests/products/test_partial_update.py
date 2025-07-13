@@ -1,6 +1,7 @@
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import AccessToken
 import pytest
+import logging
 
 @pytest.mark.django_db
 class TestPartialUpdate:
@@ -56,6 +57,7 @@ class TestPartialUpdate:
         }
     
     def test_success(self, client):
+        logging.debug('Start partial update test')
         response = client.patch(
             self.url,
             data=self.data,
@@ -63,7 +65,7 @@ class TestPartialUpdate:
             content_type='application/json'
         )
 
-        assert response.status_code==200
+        assert response.status_code==200, f'Erro: {response.status_code} - {response.json()}'
         json = response.json()
         assert json.get('name') == self.data['name']
         assert json.get('price') == self.data['price']
@@ -76,6 +78,7 @@ class TestPartialUpdate:
             assert tag in copy_tags
 
     def test_unauthorized(self, client):
+        logging.debug('Start partial update with anonymous user test')
         response = client.patch(
             self.url,
             data=self.data,
@@ -85,6 +88,7 @@ class TestPartialUpdate:
         assert response.status_code==401
 
     def test_tag_already_exists(self, client):
+        logging.debug('Start partial update with tags that already exists test')
         response = client.patch(
             self.url,
             data={
@@ -99,7 +103,7 @@ class TestPartialUpdate:
             content_type='application/json'
         )
 
-        assert response.status_code==200
+        assert response.status_code==200, f'Erro: {response.status_code} - {response.json()}'
         json = response.json()
         assert json is not None
 

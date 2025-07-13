@@ -1,5 +1,6 @@
 from rest_framework_simplejwt.tokens import AccessToken
 import pytest
+import logging
 
 @pytest.mark.django_db
 class TestCreate:
@@ -42,6 +43,7 @@ class TestCreate:
             Tag.objects.create(**tag)
     
     def test_success(self, client):
+        logging.debug('Start create product test')
         response = client.post(
             self.url,
             data=self.data,
@@ -49,11 +51,12 @@ class TestCreate:
             content_type='application/json'
         )
 
-        assert response.status_code==201
+        assert response.status_code==201, f'Erro: {response.status_code} - {response.json()}'
         json = response.json()
         assert json is not None
 
     def test_unauthorized(self, client):
+        logging.debug('Start create product with anonymous user test')
         response = client.post(
             self.url,
             data=self.data,
@@ -63,6 +66,7 @@ class TestCreate:
         assert response.status_code==401
 
     def test_tags_already_exists(self, client, create_tags):
+        logging.debug('Start create product with tags that already exists test')
         response = client.post(
             self.url,
             data=self.data,
@@ -70,7 +74,7 @@ class TestCreate:
             content_type='application/json'
         )
 
-        assert response.status_code==201
+        assert response.status_code==201, f'Erro: {response.status_code} - {response.json()}'
         json = response.json()
         assert json is not None
 
