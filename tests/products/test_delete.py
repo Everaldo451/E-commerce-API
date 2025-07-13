@@ -1,6 +1,7 @@
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import AccessToken
 import pytest
+import logging
 
 @pytest.mark.django_db
 class TestDelete:
@@ -47,6 +48,7 @@ class TestDelete:
         }
     
     def test_success(self, client):
+        logging.debug('Start delete product test')
         response = client.delete(
             self.url,
             headers=self.headers,
@@ -56,6 +58,7 @@ class TestDelete:
         assert response.status_code==204
 
     def test_unauthorized(self, client):
+        logging.debug('Start delete product with anonymous user test')
         response = client.delete(
             self.url,
             content_type='application/json'

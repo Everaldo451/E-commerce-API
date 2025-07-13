@@ -1,6 +1,7 @@
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import AccessToken
 import pytest
+import logging
 
 @pytest.mark.django_db
 class TestRead:
@@ -57,6 +58,7 @@ class TestRead:
         }
     
     def test_is_anonymous_user(self, client):
+        logging.debug('Start read product test')
         response = client.get(
             self.url,
             content_type='application/json'
@@ -75,6 +77,7 @@ class TestRead:
             assert tag in copy_tags
 
     def test_is_owner_user(self, client):
+        logging.debug('Start read product with owner user test')
         response = client.get(
             self.url,
             headers=self.headers,
@@ -94,6 +97,7 @@ class TestRead:
             assert tag in copy_tags
 
     def test_is_authenticated_user(self, client):
+        logging.debug('Start read product with authenticated user test')
         response = client.get(
             self.url,
             headers={

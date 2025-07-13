@@ -1,6 +1,7 @@
 from rest_framework.test import APIRequestFactory
 from rest_framework_simplejwt.tokens import AccessToken
 import pytest
+import logging
 
 @pytest.mark.django_db
 class TestTotalUpdate:
@@ -58,6 +59,7 @@ class TestTotalUpdate:
         }
     
     def test_success(self, client):
+        logging.debug('Start total update test')
         response = client.put(
             self.url,
             data=self.data,
@@ -68,6 +70,7 @@ class TestTotalUpdate:
         assert response.status_code==200
 
     def test_unauthorized(self, client):
+        logging.debug('Start total update with anonymous user test')
         response = client.put(
             self.url,
             data=self.data,
@@ -77,6 +80,7 @@ class TestTotalUpdate:
         assert response.status_code==401
 
     def test_incomplete_data(self, client):
+        logging.debug('Start total update with incomplete data test')
         data = {**self.data,}
         data.pop('name')
 
