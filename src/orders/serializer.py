@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from products.models import Product
@@ -17,6 +18,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ['id', 'products', 'created_at', 'created_by']
         read_only_fields = ['id', 'created_at', 'created_by']
 
+    @transaction.atomic
     def create(self, validated_data:dict):
         request = self.context.get('request')
         user = request.user
@@ -28,6 +30,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return order
     
+    @transaction.atomic
     def update(self, instance:Order, validated_data:dict):
         request = self.context.get('request')
 

@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 from typing import Callable
 from .models import Tag, Product, ProductMedia
@@ -43,6 +44,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_or_create_tags(self, tags_data):
         return [Tag.objects.get_or_create(**tag)[0] for tag in tags_data]
 
+    @transaction.atomic
     def create(self, validated_data:dict):
         logging.debug('Start product create.')
         request = self.context.get('request')
@@ -67,6 +69,7 @@ class ProductSerializer(serializers.ModelSerializer):
         logging.debug('product created successfully.')
         return product
     
+    @transaction.atomic
     def update(self, instance:Product, validated_data:dict):
         logging.debug("Start product update.")
         request = self.context.get('request')
