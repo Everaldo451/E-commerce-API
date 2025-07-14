@@ -16,5 +16,5 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     status = models.CharField(
         choices=[(status.value, status.name.title()) for status in OrderStatus],
-        default=OrderStatus.PENDING,
+        default=OrderStatus.PENDING.value,
     )
