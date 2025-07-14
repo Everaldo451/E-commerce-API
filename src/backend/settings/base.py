@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'backend.core',
     'users',
     'products',
-    'authentication'
+    'authentication',
+    'orders'
 ]
 
 MIDDLEWARE = [
