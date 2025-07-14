@@ -37,8 +37,8 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def use_product_media_method(self, *args, media_data:list[dict], product, media_method:Callable) -> None:
         for media in media_data:
-                media_data = {key: media[key] for key in args}
-                media_method(product=product, **media_data)
+            media_data = {key: media[key] for key in args}
+            media_method(product=product, **media_data)
 
     def get_or_create_tags(self, tags_data):
         return [Tag.objects.get_or_create(**tag)[0] for tag in tags_data]
