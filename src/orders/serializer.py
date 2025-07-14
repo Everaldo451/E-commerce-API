@@ -15,11 +15,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'products', 'created_at', 'created_by']
+        fields = ['id', 'products', 'created_at', 'created_by', 'status']
         read_only_fields = ['id', 'created_at', 'created_by']
 
     @transaction.atomic
     def create(self, validated_data:dict):
+        validated_data.pop('status', None)
         request = self.context.get('request')
         user = request.user
 
