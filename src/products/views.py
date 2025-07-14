@@ -14,6 +14,13 @@ class ProductViewsets(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes=(permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
+    @swagger_auto_schema(
+        operation_description = 'Login the user in the API',
+        query_serializer=SearchSerializer,
+        responses={
+            200: ProductSerializer(many=True),
+        }
+    )
     @action(detail=False, methods=["GET"])
     def search(self, request:Request):
         serializer = SearchSerializer(data=request.data)
