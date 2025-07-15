@@ -1,6 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
 from typing import Callable
+
+from users.models import User
 from .models import Tag, Product, ProductMedia
 import logging
 
@@ -104,12 +106,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class SearchSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=False)
     tags = serializers.SlugRelatedField(
         many=True,
         slug_field='name',
-        queryset=Tag.objects.all()
+        queryset=Tag.objects.all(),
+        required=False
     )
-    created_by = serializers.CharField(source="created_by.username")
+    created_by = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field='username',
+        required=False
+    )
 
     class Meta:
         model = Product
