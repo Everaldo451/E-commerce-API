@@ -35,10 +35,10 @@ class OrderSerializer(serializers.ModelSerializer):
     def update(self, instance:Order, validated_data:dict):
         request = self.context.get('request')
 
+        instance.status = validated_data.get('status', instance.status)
+
+        instance.save()
         products = validated_data.get('products', instance.products)
-        if request.method == 'PATCH':
-            instance.products.add(*products)
-        else:
-            instance.products.set(products)
+        instance.products.set(products.all())
 
         return instance
